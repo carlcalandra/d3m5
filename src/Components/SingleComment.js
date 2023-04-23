@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card } from 'react-bootstrap'
+import StarRate from './StarRate'
 
 const SingleComment = ({comment, token, setComments}) => {
     const handleDelete = async () => {
@@ -27,7 +28,7 @@ const SingleComment = ({comment, token, setComments}) => {
                 <p>Comment: {comment.comment}</p>
                 <div className='d-flex justify-content-between'>
                     <span>Author: {comment.author}</span>
-                    <span>Rate: {comment.rate}</span>
+                    <StarRate rate={parseInt(comment.rate)}/>
                 </div>
             </Card.Text>
             <Button variant='danger' size='sm' onClick={handleDelete}>Delete Comment</Button>
