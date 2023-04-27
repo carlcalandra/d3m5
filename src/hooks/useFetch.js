@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useFetch = (url, headers) => {
+const useFetch = (url, headers, method="GET") => {
 
     const [data, setData] = useState([])
 
@@ -13,7 +13,7 @@ const useFetch = (url, headers) => {
             setLoading(true)
             try {
                 const response = await fetch(url, {
-                    method:"GET",
+                    method:method,
                     headers:headers,
                 })
                 if (response.ok) {

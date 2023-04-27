@@ -4,15 +4,15 @@ import { useState } from "react";
 import { CommentArea } from "./CommentArea";
 
 
-const SingleCard = ({book, token}) => {
-  const [selected, setSelected] = useState(false);
+const SingleCard = ({book, token, selected, setSelected}) => {
+  
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false)
 
   return (
     <>
       <Card
         className={`h-100 pt-2 ${selected && "border border-danger"}`}
-        onClick={() => setSelected((prev) => !prev)}
+        onClick={() => setSelected(book.asin)}
       >
         <Card.Img
           src={book.img}

@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import ThemeContext from "../context/themeContext";
 
-const SearchBar = ({ data, setFilteredData }) => {
-  const [search, setSearch] = useState("");
-  useEffect(() => {
-      setFilteredData(
-        data.filter((item) =>
-          item.title.toLowerCase().includes(search.toLowerCase())
-        )
-      );
-    }, [search, data, setFilteredData]);
-
+const SearchBar = ({ query, setQuery }) => {
+  const {theme,toggleTheme} = useContext(ThemeContext);
   return (
-    <Form>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Control
-          type="text"
-          placeholder="Filter your book"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </Form.Group>
-    </Form>
+    <div className="d-flex align-items-center mb-2">
+      <Button className="me-2" onClick={toggleTheme}>Change Theme</Button>
+      <Form style={{backgroundColor:theme.background}}>
+        <Form.Group>
+          <Form.Control
+            type="text"
+            placeholder="Filter your book"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </Form.Group>
+      </Form>
+    </div>
   );
 };
 
