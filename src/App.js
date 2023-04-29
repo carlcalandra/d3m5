@@ -3,10 +3,11 @@ import "./App.css";
 //import data from "./data/fantasy.json"
 import BookList from "./Components/BookList";
 import SearchBar from "./Components/SearchBar";
-import { Container } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { PacmanLoader } from "react-spinners";
 import ThemeContext from "./context/themeContext";
 import { themes } from "./context/themeContext";
+import { CommentArea } from "./Components/CommentAreaNoModal";
 
 const authenticationBody = {
   username: "carlocalandra@test.com",
@@ -68,30 +69,39 @@ class App extends React.Component {
   }
   render() {
     return (
-      <ThemeContext.Provider value={{theme:this.state.theme, toggleTheme:() => {console.log("clicked"); this.changeState("theme", this.state.theme === themes.light ? themes.dark :themes.light)}}}>
-        <div className="py-2">
-          <Container>
-            {this.state.loading && !this.state.error && (
-              <div className="d-flex justify-content-center vh-100 v-100 align-items-center">
-                <PacmanLoader color="#36d7b7" size={50} />
-              </div>
-            )}
-            {!this.state.loading && !this.state.error && (
+      <ThemeContext.Provider
+        value={{
+          theme: this.state.theme,
+          toggleTheme: () => {
+            console.log("clicked");
+            this.changeState(
+              "theme",
+              this.state.theme === themes.light ? themes.dark : themes.light
+            );
+          },
+        }}
+      >
+        <div className="py-2 px-4">
+          {this.state.loading && !this.state.error && (
+            <div className="d-flex justify-content-center vh-100 v-100 align-items-center">
+              <PacmanLoader color="#36d7b7" size={50} />
+            </div>
+          )}
+          {!this.state.loading && !this.state.error && (
+            <Container fluid>
               <SearchBar
                 query={this.state.query}
                 setQuery={(value) => this.changeState("query", value)}
               />
-            )}
-            {!this.state.loading && !this.state.error && (
               <BookList
                 query={this.state.query}
                 books={this.state.books}
                 token={this.state.token}
                 setError={(value) => this.changeState("error", value)}
               />
-            )}
-            {this.state.error && <p>{this.state.error}</p>}
-          </Container>
+            </Container>
+          )}
+          {this.state.error && <p>{this.state.error}</p>}
         </div>
       </ThemeContext.Provider>
     );

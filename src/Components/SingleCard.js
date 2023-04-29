@@ -12,7 +12,7 @@ const SingleCard = ({book, token, selected, setSelected}) => {
     <>
       <Card
         className={`h-100 pt-2 ${selected && "border border-danger"}`}
-        onClick={() => setSelected(book.asin)}
+        onClick={() => setSelected(book)}
       >
         <Card.Img
           src={book.img}
