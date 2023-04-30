@@ -8,6 +8,7 @@ import { PacmanLoader } from "react-spinners";
 import ThemeContext from "./context/themeContext";
 import { themes } from "./context/themeContext";
 
+
 const authenticationBody = {
   username: "carlocalandra@test.com",
   password: "Test",
@@ -58,9 +59,7 @@ class App extends React.Component {
   async componentDidMount() {
     this.changeState("loading", true);
     const token = (await this.getToken()).access_token;
-    console.log(token);
     this.changeState("token", token);
-    console.log(this.state.token);
     const books = await this.getBooks();
     this.changeState("books", books);
     this.changeState("books", books);
@@ -68,9 +67,20 @@ class App extends React.Component {
   }
   render() {
     return (
-      <ThemeContext.Provider value={{theme:this.state.theme, toggleTheme:() => {console.log("clicked"); this.changeState("theme", this.state.theme === themes.light ? themes.dark :themes.light)}}}>
-        <div className="py-2">
-          <Container>
+      <ThemeContext.Provider
+        value={{
+          theme: this.state.theme,
+          toggleTheme: () => {
+            console.log("clicked");
+            this.changeState(
+              "theme",
+              this.state.theme === themes.light ? themes.dark : themes.light
+            );
+          },
+        }}
+      >
+        <Container fluid>
+          <div className="py-2">
             {this.state.loading && !this.state.error && (
               <div className="d-flex justify-content-center vh-100 v-100 align-items-center">
                 <PacmanLoader color="#36d7b7" size={50} />
@@ -91,8 +101,8 @@ class App extends React.Component {
               />
             )}
             {this.state.error && <p>{this.state.error}</p>}
-          </Container>
-        </div>
+          </div>
+        </Container>
       </ThemeContext.Provider>
     );
   }

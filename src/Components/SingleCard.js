@@ -12,7 +12,7 @@ const SingleCard = ({book, token, selected, setSelected}) => {
     <>
       <Card
         className={`h-100 pt-2 ${selected && "border border-danger"}`}
-        onClick={() => setSelected(book.asin)}
+        onClick={() => setSelected(book)}
       >
         <Card.Img
           src={book.img}
@@ -22,11 +22,11 @@ const SingleCard = ({book, token, selected, setSelected}) => {
         <Card.Body>
           <Card.Title>{book.title}</Card.Title>
         </Card.Body>
-        <Card.Footer className="d-flex justify-content-center">
+        {/* <Card.Footer className="d-flex justify-content-center">
           <Button onClick={() => setIsCommentModalOpen(true)}>Comments</Button>
-        </Card.Footer> 
+        </Card.Footer>  */}
       </Card>
-      {isCommentModalOpen && <CommentArea book={book} setIsCommentModalOpen={setIsCommentModalOpen} token={token}/>}
+      {/* {isCommentModalOpen && <CommentArea book={book} setIsCommentModalOpen={setIsCommentModalOpen} token={token}/>} */}
     </>
   );
 };

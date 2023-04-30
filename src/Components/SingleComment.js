@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Card } from 'react-bootstrap'
 import StarRate from './StarRate'
 
-const SingleComment = ({comment, token, setComments}) => {
+const SingleComment = ({comment, token, setComments, setRefresher, setIsDelete}) => {
     const handleDelete = async () => {
         try {
             const response = await fetch("https://striveschool-api.herokuapp.com/api/comments/" + comment._id, {
@@ -13,11 +13,14 @@ const SingleComment = ({comment, token, setComments}) => {
                 }
             })
             if (response.ok){
-                setComments(prev => prev.filter(prevComment => prevComment._id !== comment._id))
+                console.log("sei qui")
+                console.log(setRefresher)
+                setIsDelete(true)
+                setRefresher(true)
             }
             
         } catch (error) {
-            
+            console.error(error)
         }
 
     }
