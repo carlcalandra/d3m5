@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
-const AddComment = ({ asin, createComment, setComments, setActivePage,  lastPage}) => {
+const AddComment = ({ asin, createComment}) => {
   const formInitial = {
     comment: "",
     rate: "1",
