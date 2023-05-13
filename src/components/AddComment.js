@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
-const AddComment = ({ asin, createComment}) => {
+const AddComment = ({ asin, createComment }) => {
   const formInitial = {
     comment: "",
-    rate: "1",
+    rate: "",
     elementId: asin,
-  }
+  };
 
   const [form, setForm] = useState(formInitial);
 
@@ -16,13 +16,15 @@ const AddComment = ({ asin, createComment}) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try{
-        await createComment(form);
-        setForm(formInitial);
-    } catch (error){
-
-    }
-}
+    try {
+      await createComment(form);
+      setForm(formInitial);
+    } catch (error) {}
+  };
+  const isFormValid = () => {
+    const {comment, rate} = form;
+    return comment.length > 0 && rate.length > 0 ? true : false
+  }
 
   const radioEls = [];
   for (let i = 1; i <= 5; i++) {
@@ -42,7 +44,7 @@ const AddComment = ({ asin, createComment}) => {
 
   return (
     <Form onSubmit={handleSubmit}>
-        <h3>Invia il tuo commento</h3>
+      <h3>Invia il tuo commento</h3>
       <Form.Group className="mb-2">
         <Form.Control
           type="text"
@@ -55,10 +57,10 @@ const AddComment = ({ asin, createComment}) => {
       <Form.Group className="d-flex px-3 py-1 border rounded mb-2">
         <Form.Label className="my-0">Your rate</Form.Label>
         {radioEls}
-      </Form.Group >
+      </Form.Group>
       <div className="d-flex justify-content-center">
-        <Button type="submit">Send</Button>
-      </div>    
+        <Button disabled={!isFormValid()} type="submit">Send</Button>
+      </div>
     </Form>
   );
 };

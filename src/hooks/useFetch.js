@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import getLastPage from "../utils/getLastPage";
+import ErrorContext from "../context/ErrorContext";
 
 const useFetch = (url, headers, itemsPerPage) => {
   const [data, setData] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
-  const [refresher, setRefresher] = useState(false);
-
-  const [errors, setErrors] = useState([]);
+  const [refresher, setRefresher] = useState(true);
 
   const [activePage, setActivePage] = useState(0);
 
   const [isDelete, setIsDelete] = useState(false);
+
+  const {setErrors} = useContext(ErrorContext); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +36,7 @@ const useFetch = (url, headers, itemsPerPage) => {
             throw Error(await response.text());
           }
         } catch (error) {
-          setErrors(prev => [...prev, error]);
+          setErrors(error);
         } finally {
           setRefresher(false);
           setLoading(false);
@@ -50,8 +51,6 @@ const useFetch = (url, headers, itemsPerPage) => {
     data,
     setData,
     loading,
-    errors,
-    setErrors,
     setRefresher,
     activePage,
     setActivePage,

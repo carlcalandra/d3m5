@@ -2,9 +2,10 @@ import { Card, Button} from "react-bootstrap";
 import MyBadge from "./MyBadge";
 import { useState } from "react";
 import { CommentArea } from "./CommentArea";
+import { Link } from "react-router-dom";
 
 
-const SingleCard = ({book, token, selected, setSelected}) => {
+const SingleCard = ({book, selected, setSelected}) => {
   
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false)
 
@@ -22,9 +23,9 @@ const SingleCard = ({book, token, selected, setSelected}) => {
         <Card.Body>
           <Card.Title>{book.title}</Card.Title>
         </Card.Body>
-        {/* <Card.Footer className="d-flex justify-content-center">
-          <Button onClick={() => setIsCommentModalOpen(true)}>Comments</Button>
-        </Card.Footer>  */}
+        <Card.Footer className="d-flex justify-content-center">
+          <Link to={"/books/" + book.asin}><Button>Go to details</Button></Link>
+        </Card.Footer> 
       </Card>
       {/* {isCommentModalOpen && <CommentArea book={book} setIsCommentModalOpen={setIsCommentModalOpen} token={token}/>} */}
     </>

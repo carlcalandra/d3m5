@@ -2,10 +2,8 @@ import { Row, Col, Container } from "react-bootstrap";
 import { useContext, useState } from "react";
 import SingleCard from "./SingleCard";
 import { CommentArea } from "./CommentAreaNoModal";
-import ThemeContext from "../context/themeContext";
 
-const BookList = ({ query, books, token, setError }) => {
-  const { theme } = useContext(ThemeContext);
+const BookList = ({ query, books}) => {
   const [selected, setSelected] = useState(null);
   const cards = books
     .filter((book) => book.title.toLowerCase().includes(query.toLowerCase()))
@@ -13,7 +11,6 @@ const BookList = ({ query, books, token, setError }) => {
       <Col key={book.asin}>
         <SingleCard
           book={book}
-          token={token}
           selected={selected === book}
           setSelected={setSelected}
         ></SingleCard>
@@ -23,7 +20,6 @@ const BookList = ({ query, books, token, setError }) => {
     <div className="mt-4">
       <Row
         xs={2}
-        style={{ backgroundColor: theme.background, color: theme.foreground }}
       >
         <Col>
           <Row xs={1} md={2} lg={3} className="g-3">
@@ -32,7 +28,7 @@ const BookList = ({ query, books, token, setError }) => {
         </Col>
         <Col>
           {selected && (
-            <CommentArea book={selected} token={token} setError={setError} />
+            <CommentArea book={selected}/>
           )}
         </Col>
       </Row>

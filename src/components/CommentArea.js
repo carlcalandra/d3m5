@@ -11,7 +11,7 @@ export const CommentArea = ({ book, setIsCommentModalOpen, token }) => {
                       "Content-Type": "application/json",
                     }
   const [showModal, setShowModal] = useState(true);
-  const [comments, setComments, loading, error] = useFetch(baseUrl + book, headers);
+  const [comments, setComments, loading] = useFetch(baseUrl + book, headers);
   const [currentComments, setCurrentComments] = useState([]);
   const itemsPerPage = 5; 
   let lastPage= Math.ceil(comments.length/itemsPerPage);

@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { Spinner, ToastContainer } from "react-bootstrap";
+import React, { useContext, useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import MyPagination from "./MyPagination";
 import CommentList from "./CommentList";
 import AddComment from "./AddComment";
 import useFetch from "../hooks/useFetch";
 import getLastPage from "../utils/getLastPage";
-import MyToast from "./MyToast";
-export const CommentArea = ({ book, token }) => {
+import TokenContext from "../context/TokenContext";
+import ErrorContext from "../context/ErrorContext";
+
+export const CommentArea = ({ book }) => {
+
+  const {token} = useContext(TokenContext);
+  const {setErrors} = useContext(ErrorContext);
+  console.log(token)
   const baseUrl = "https://striveschool-api.herokuapp.com/api/comments/";
   const headers = {
     Authorization: "Bearer " + token,
     "Content-Type": "application/json",
   };
   const itemsPerPage = 5;
-  const [comments, setComments, loading, errors, setErrors, setRefresher, activePage, setActivePage, setIsDelete] = useFetch(
+  const [comments, setComments, loading, setRefresher, activePage, setActivePage, setIsDelete] = useFetch(
     baseUrl + book.asin,
     headers,
     itemsPerPage
@@ -28,13 +34,12 @@ export const CommentArea = ({ book, token }) => {
         body: JSON.stringify(form),
       });
       if (response.ok) {
-        const data = await response.json();
         setRefresher(true);
       } else {
-        throw Error();
+        throw Error(await response.text());
       }
     } catch (error) {
-        setErrors(prev => [...prev, error])
+        setErrors(error)
     }
   };
 
@@ -48,7 +53,7 @@ export const CommentArea = ({ book, token }) => {
     );
   }, [activePage, comments]);
 
-  const toastEls = errors.map(error => <MyToast title="Error" text={error.message} onClose={() => {setErrors(prev => prev.filter(prevErr => prevErr !== error))}}/>)
+  
   return (
     <>
       {loading && (
@@ -56,9 +61,6 @@ export const CommentArea = ({ book, token }) => {
           <Spinner animation="border" variant="info" />
         </div>
       )}
-      <ToastContainer position="top-end" className="p-3">
-        {toastEls}
-      </ToastContainer>
       {!loading && (
         <CommentList
           comments={currentComments}

@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import Toast from "react-bootstrap/Toast";
 import MyBadge from "./MyBadge";
 
-function MyToast({ title, text, color, onClose }) {
+function MyToast({ title, text, onClose }) {
   const [show, setShow] = useState(true);
 
   const [time, setTime] = useState(0);
+  
 
   useEffect(() => {
-    setInterval(() => {
+    const interval = setInterval(() => {
       setTime((prev) => (prev += 1));
     }, 1000);
+    return () => clearInterval(interval)
   }, []);
 
   const handleClose = () => {

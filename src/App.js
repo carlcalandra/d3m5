@@ -1,119 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 //import data from "./data/fantasy.json"
-import BookList from "./Components/BookList";
-import SearchBar from "./Components/SearchBar";
-import { Container } from "react-bootstrap";
-import { PacmanLoader } from "react-spinners";
-import ThemeContext from "./context/themeContext";
-import { themes } from "./context/themeContext";
 
-const authenticationBody = {
-  username: "carlocalandra@test.com",
-  password: "Test",
-};
-
-// class App extends React.Component {
-//   constructor() {
-//     super();
-//     this.state = {
-//       theme: themes.light,
-//       books: [],
-//       loading: false,
-//       query: "",
-//       error: null,
-//       token: "",
-//     };
-//   }
-
-//   changeState = (key, value) => {
-//     this.setState((prev) => ({ ...prev, [key]: value }));
-//   };
-//   getToken = async () => {
-//     try {
-//       const response = await fetch(
-//         "https://striveschool-api.herokuapp.com/api/account/register",
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(authenticationBody),
-//         }
-//       );
-//       return await response.json();
-//     } catch (error) {
-//       this.changeState("error", error.message);
-//     }
-//   };
-//   getBooks = async () => {
-//     try {
-//       const response = await fetch("https://epibooks.onrender.com/");
-//       return await response.json();
-//     } catch (error) {
-//       this.changeState("error", error.message);
-//     }
-//   };
-
-//   async componentDidMount() {
-//     this.changeState("loading", true);
-//     const token = (await this.getToken()).access_token;
-//     this.changeState("token", token);
-//     const books = await this.getBooks();
-//     this.changeState("books", books);
-//     this.changeState("books", books);
-//     this.changeState("loading", false);
-//   }
-//   render() {
-//     return (
-//       <ThemeContext.Provider
-//         value={{
-//           theme: this.state.theme,
-//           toggleTheme: () => {
-//             console.log("clicked");
-//             this.changeState(
-//               "theme",
-//               this.state.theme === themes.light ? themes.dark : themes.light
-//             );
-//           },
-//         }}
-//       >
-//         <Container fluid>
-//           <div className="py-2">
-//             {this.state.loading && !this.state.error && (
-//               <div className="d-flex justify-content-center vh-100 v-100 align-items-center">
-//                 <PacmanLoader color="#36d7b7" size={50} />
-//               </div>
-//             )}
-//             {!this.state.loading && !this.state.error && (
-//               <SearchBar
-//                 query={this.state.query}
-//                 setQuery={(value) => this.changeState("query", value)}
-//               />
-//             )}
-//             {!this.state.loading && !this.state.error && (
-//               <BookList
-//                 query={this.state.query}
-//                 books={this.state.books}
-//                 token={this.state.token}
-//                 setError={(value) => this.changeState("error", value)}
-//               />
-//             )}
-//             {this.state.error && <p>{this.state.error}</p>}
-//           </div>
-//         </Container>
-//       </ThemeContext.Provider>
-//     );
-//   }
-// }
+import ThemeContext from "./context/ThemeContext";
+import TokenContext from "./context/TokenContext";
+import { themes } from "./context/ThemeContext";
+import Home from "./pages/Home";
+import PageDetails from "./pages/PageDetails";
+import ErrorPage from "./pages/ErrorPage";
+import { ToastContainer } from "react-bootstrap";
+import MyToast from "./components/MyToast";
+import { nanoid } from "nanoid";
+import ErrorContext from "./context/ErrorContext";
 
 function App() {
-  const [books, setBooks] = useState([]);
-  const [query, setQuery] = useState("");
-  const [theme, setTheme] = useState(themes.light);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const addError = (error) => {
+    return {
+      error: error,
+      errorId: nanoid(),
+    };
+  };
+  const authenticationBody = {
+    username: "carlocalandra@test.com",
+    password: "Test",
+  };
   const [token, setToken] = useState("");
+  const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const toastEls = errors.map((error) => (
+    <MyToast
+      key={error.errorId}
+      title="Error"
+      text={error.error.message}
+      onClose={() => {
+        setErrors((prev) => prev.filter((prevErr) => prevErr !== error));
+      }}
+    />
+  ));
   const getToken = async () => {
     try {
       const response = await fetch(
@@ -126,50 +50,66 @@ function App() {
           body: JSON.stringify(authenticationBody),
         }
       );
-      return await response.json();
+      if (!response.ok) {
+        throw Error(await response.text());
+      } else {
+        let data = await response.json();
+        if (data.access_token !== "Invalid username / Password") {
+          return data;
+        } else {
+          throw Error("Invalid username / Password");
+        }
+      }
     } catch (error) {
-      setError(error.message);
-    }
-  };
-  const getBooks = async () => {
-    try {
-      const response = await fetch("https://epibooks.onrender.com/");
-      return await response.json();
-    } catch (error) {
-      setError(error.message);
+      setErrors(prev => [...prev, addError(error)])
     }
   };
   useEffect(() => {
-    setLoading(true);
-    getToken().then((response) => setToken(response.access_token));
-    getBooks().then((books) => {
-      setBooks(books);
+    setLoading(true)
+    getToken().then((response) => {
+      setToken(response.access_token);
       setLoading(false);
     });
   }, []);
+  const [theme, setTheme] = useState(themes.light);
   return (
     <ThemeContext.Provider
       value={{
         theme: theme,
-        toggleTheme: () => {setTheme(prev => prev === themes.light ? themes.dark : themes.light)},
+        toggleTheme: () => {
+          setTheme((prev) =>
+            prev === themes.light ? themes.dark : themes.light
+          );
+        },
       }}
     >
-      <div className="py-2">
-        <Container fluid>
-          {loading && !error && (
-            <div className="d-flex justify-content-center vh-100 v-100 align-items-center">
-              <PacmanLoader color="#36d7b7" size={50} />
-            </div>
-          )}
-          {!loading && !error && (
-            <SearchBar data={books} query={query} setQuery={setQuery} />
-          )}
-          {!loading && !error && (
-            <BookList books={books} token={token} setError={setError} query={query} />
-          )}
-          {error && <p>{error}</p>}
-        </Container>
-      </div>
+      <TokenContext.Provider
+        value={{
+          token: token,
+        }}
+      >
+        <ErrorContext.Provider
+          value={{
+            setErrors: (error) =>
+              setErrors((prev) => [...prev, addError(error)]),
+          }}
+        >
+          <BrowserRouter>
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route path="/books/:asin" element={<PageDetails />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+          </BrowserRouter>
+          <ToastContainer
+            containerPosition={"fixed"}
+            position="bottom-end"
+            className="p-3"
+          >
+            {toastEls}
+          </ToastContainer>
+        </ErrorContext.Provider>
+      </TokenContext.Provider>
     </ThemeContext.Provider>
   );
 }

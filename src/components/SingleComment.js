@@ -13,8 +13,6 @@ const SingleComment = ({comment, token, setComments, setRefresher, setIsDelete})
                 }
             })
             if (response.ok){
-                console.log("sei qui")
-                console.log(setRefresher)
                 setIsDelete(true)
                 setRefresher(true)
             }
